@@ -1,0 +1,92 @@
+﻿@model HRDC.Models.MarksEntryViewModel
+@{
+    ViewData["Title"] = "Marks Entry";
+}
+
+<script>
+    function isNumberKey(evt) {
+        var charCode = evt.which ? evt.which : evt.keyCode;
+        if (charCode === 8 || charCode === 46) return true;
+        if (charCode < 48 || charCode > 57) return false;
+        return true;
+    }
+</script>
+
+<div class="card shadow-lg p-4">
+    <h2 class="text-primary mb-4">Marks Entry</h2>
+
+    <form asp-action="LoadEmployees" method="post">
+        <fieldset class="border p-3 mb-4">
+            <legend class="float-none w-auto px-3">Select Session</legend>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <select asp-for="SelectedTraining" class="form-select">
+                        <option value="">-- Select Session --</option>
+                        @foreach (var t in Model.Trainings)
+                        {
+                            <option value="@t">@t</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.SelectedTraining))
+            {
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Enter Out Of Marks:</label>
+                        <input asp-for="OutOfMarks" class="form-control" onkeypress="return isNumberKey(event);" />
+                    </div>
+                    <div class="col-md-2 pt-4">
+                        <button type="submit" class="btn btn-primary">Load Employees</button>
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </form>
+
+    @if (Model.Employees != null && Model.Employees.Any())
+    {
+        <form asp-action="SaveMarks" method="post">
+            <fieldset class="border p-3 mb-4">
+                <legend class="float-none w-auto px-3">Enter Marks</legend>
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Employee Name</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Employees.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Model.Employees[i].EmployeeId
+                                    <input type="hidden" asp-for="@Model.Employees[i].EmployeeId" />
+                                </td>
+                                <td>
+                                    @Model.Employees[i].Name
+                                    <input type="hidden" asp-for="@Model.Employees[i].Name" />
+                                </td>
+                                <td>
+                                    <input asp-for="@Model.Employees[i].Marks" class="form-control" onkeypress="return isNumberKey(event);" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </fieldset>
+            <div class="d-flex gap-2 mb-3">
+                <button type="submit" class="btn btn-success">Save Marks</button>
+            </div>
+        </form>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <p class="fw-bold @(Model.Message.StartsWith("✅") ? "text-success" : "text-danger")">@Model.Message</p>
+    }
+</div>

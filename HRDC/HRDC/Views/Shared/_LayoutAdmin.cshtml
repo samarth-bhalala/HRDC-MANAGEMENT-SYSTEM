@@ -1,0 +1,267 @@
+﻿@{
+    Layout = null;
+    var username = ViewBag.Username ?? "Admin";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap & FontAwesome CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+    <!-- Your custom CSS -->
+    <style>
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: #1d4ed8;
+            color: #fff;
+            padding: 20px;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .sidebar h4 {
+                color: #93c5fd;
+                margin-bottom: 2rem;
+            }
+
+            .sidebar a {
+                color: #f3f4f6;
+                text-decoration: none;
+                display: block;
+                margin: 15px 0;
+                font-size: 16px;
+            }
+
+                .sidebar a:hover {
+                    color: #fff;
+                    text-decoration: underline;
+                }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            display: none;
+        }
+
+            .overlay.active {
+                display: block;
+            }
+
+        /* Header */
+        .dashboard-header {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .sidebar-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .dashboard-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            color: white;
+        }
+
+        .notification-bell {
+            margin-left: auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* User dropdown */
+        .dropdown-toggle::after {
+            display: none;
+        }
+
+        .btn-user {
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: white;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+            .btn-user .user-info {
+                margin-right: 0.5rem;
+                text-align: right;
+            }
+
+                .btn-user .user-info span {
+                    font-size: 0.875rem;
+                    display: block;
+                }
+
+                .btn-user .user-info strong {
+                    font-weight: bold;
+                    display: block;
+                    font-size: 1rem;
+                }
+
+        /* Footer */
+        .footer {
+            background-color: #f8f9fa;
+            padding: 15px 0;
+            text-align: center;
+            margin-top: auto;
+            font-size: 14px;
+            color: #6c757d;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .main-container {
+            flex: 1;
+            padding: 1rem;
+            margin-left: 0; /* Will change when sidebar active */
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.active ~ .main-container {
+            margin-left: 250px;
+        }
+    </style>
+
+    @RenderSection("HeadContent", required: false)
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebarMenu">
+        <h4>Admin Panel</h4>
+        <a asp-controller="Admin" asp-action="Dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+        <a asp-controller="Admin" asp-action="Upload"><i class="fa-solid fa-upload"></i> Upload Certificate</a>
+        <a asp-controller="Admin" asp-action="ViewEmployee"><i class="fa-solid fa-users"></i> View Employee</a>
+        <a asp-controller="Admin" asp-action="TrainingManagement"><i class="fas fa-chalkboard-teacher me-2"></i>Manage Trainings</a>
+        <a asp-controller="Admin" asp-action="AttendanceManagement"><i class="fas fa-clipboard-check me-2"></i>Attendance</a>
+        <a asp-controller="Admin" asp-action="Generate"><i class="fas fa-certificate me-2"></i>Certificates</a>
+        <a asp-controller="Admin" asp-action="MarksEntry"><i class="fas fa-clipboard-check me-2"></i>Marks</a>
+        <a asp-controller="Admin" asp-action="TrainingApproval"><i class="fas fa-clipboard-check me-2"></i>Training Approval</a>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Header -->
+    <header class="dashboard-header d-flex align-items-center">
+        <button class="sidebar-toggle" type="button" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <img src="~/images/Charusat_Logo.png" alt="Charusat Logo" class="logo" />
+        <span class="dashboard-title">Admin Dashboard</span>
+
+        <div class="ms-auto d-flex align-items-center">
+            <div class="notification-bell" onclick="alert('No new notifications')">
+                <i class="fas fa-bell text-white"></i>
+                <span class="notification-badge">2</span>
+            </div>
+            <div class="dropdown ms-3">
+                <button class="btn-user dropdown-toggle" type="button" id="userMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="user-info">
+                        <span>Welcome,</span>
+                        <strong>@username</strong>
+                    </div>
+                    <i class="fas fa-user-circle fa-lg"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenuBtn">
+                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <div class="main-container">
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            © 2025 Charotar University of Science & Technology. All Rights Reserved
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById("sidebarMenu");
+        const toggleBtn = document.getElementById("sidebarToggle");
+        const overlay = document.getElementById("overlay");
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

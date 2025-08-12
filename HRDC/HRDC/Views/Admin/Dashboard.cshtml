@@ -1,0 +1,193 @@
+﻿@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+
+    // Prepare SelectList options in code block
+    var attendanceOptions = new SelectList(new[] {
+        new { Text = "All", Value = "all" },
+        new { Text = "Today", Value = "today" },
+        new { Text = "This Week", Value = "week" },
+        new { Text = "This Month", Value = "month" }
+    }, "Value", "Text", Model.SelectedAttendanceFilter);
+
+    var feedbackOptions = new SelectList(new[] {
+        new { Text = "All", Value = "all" },
+        new { Text = "Positive", Value = "positive" },
+        new { Text = "Negative", Value = "negative" },
+        new { Text = "Neutral", Value = "neutral" }
+    }, "Value", "Text", Model.SelectedFeedbackFilter);
+}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+    .stat-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        opacity: 0.9;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+        .chart-container:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .chart-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .chart-dropdown {
+        background: #f9fafb;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+        .chart-dropdown:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+    .chart-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+    }
+
+    .pie-chart svg {
+        width: 200px;
+        height: 200px;
+    }
+</style>
+
+<div class="container">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3 class="stat-title">Seminar</h3>
+            <p class="stat-number">@Model.SeminarCount</p>
+        </div>
+        <div class="stat-card">
+            <h3 class="stat-title">Technical Staff</h3>
+            <p class="stat-number">@Model.TechnicalStaffCount</p>
+        </div>
+        <div class="stat-card">
+            <h3 class="stat-title">Non-Technical Staff</h3>
+            <p class="stat-number">@Model.NonTechnicalStaffCount</p>
+        </div>
+        <div class="stat-card">
+            <h3 class="stat-title">Total Staff</h3>
+            <p class="stat-number">@Model.TotalStaffCount</p>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+        <!-- Attendance Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Attendance</h3>
+                <select class="chart-dropdown" asp-for="SelectedAttendanceFilter" asp-items="attendanceOptions"></select>
+            </div>
+            <div class="chart-content">
+                <div class="pie-chart">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="40" />
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="40"
+                                stroke-dasharray="402.12 100.53" stroke-dashoffset="0"
+                                transform="rotate(-90 100 100)" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">Feedback</h3>
+                <select class="chart-dropdown" asp-for="SelectedFeedbackFilter" asp-items="feedbackOptions"></select>
+            </div>
+            <div class="chart-content">
+                <div class="pie-chart">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="40" />
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#10b981" stroke-width="40"
+                                stroke-dasharray="351.86 150.8" stroke-dashoffset="0"
+                                transform="rotate(-90 100 100)" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

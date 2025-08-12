@@ -1,0 +1,219 @@
+﻿@{
+    Layout = null;
+    var username = ViewBag.Username ?? "User";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Participant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("HeadContent", required: false)
+
+    <style>
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: #1d4ed8;
+            color: #fff;
+            padding: 20px;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .sidebar a {
+                color: #fff;
+                text-decoration: none;
+                display: block;
+                margin: 15px 0;
+                font-size: 16px;
+            }
+
+                .sidebar a:hover {
+                    text-decoration: underline;
+                }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0,0,0,0.3);
+            z-index: 1500;
+            display: none;
+        }
+
+            .overlay.active {
+                display: block;
+            }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .sidebar-toggle {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+            .sidebar-toggle:hover {
+                transform: scale(1.1);
+            }
+
+        .logo {
+            height: 40px;
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            color: white;
+        }
+
+        .notification-bell {
+            position: relative;
+            margin-left: 1.5rem;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid #e9ecef;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebarMenu">
+        <h4>Navigation</h4>
+        <a asp-controller="Participant" asp-action="Dashboard"><i class="fas fa-home me-2"></i>Dashboard</a>
+        <a asp-controller="Participant" asp-action="MySessions"><i class="fas fa-chalkboard-teacher me-2"></i>My Sessions</a>
+        <a asp-controller="Participant" asp-action="UpcomingSessions"><i class="fas fa-calendar-alt me-2 text-info"></i>Upcoming Sessions</a>
+        <a asp-controller="Participant" asp-action="TrainingDetails"><i class="fas fa-chalkboard-teacher me-2"></i>Training Details</a>
+        <a asp-controller="Participant" asp-action="TrainingFeedback"><i class="fas fa-certificate me-2"></i>Feedback</a>
+        <a asp-controller="Participant" asp-action="ViewCertificate"><i class="fas fa-certificate me-2"></i>Certificates</a>
+        <a asp-controller="Account" asp-action="Logout" class="text-danger"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- HEADER -->
+    <header class="dashboard-header d-flex align-items-center">
+        <button class="sidebar-toggle" type="button" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <img src="~/images/Charusat_Logo.png" alt="Charusat Logo" class="logo" />
+        <span class="dashboard-title">Dashboard</span>
+        <div class="notification-bell ms-auto">
+            <i class="fas fa-bell fa-lg text-white" onclick="alert('No new notifications')"></i>
+            <span class="notification-badge">3</span>
+        </div>
+        <div class="dropdown ms-3">
+            <button class="btn p-0 border-0 bg-transparent d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                <div class="text-white text-end me-2">
+                    <span>Welcome,</span>
+                    <strong>@username</strong>
+                </div>
+                <i class="fas fa-user-circle fa-lg text-white"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+                <li><a class="dropdown-item" asp-controller="Participant" asp-action="Profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                <li><a class="dropdown-item" asp-controller="Account" asp-action="ForgotPassword"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="main-container">
+        @RenderBody()
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">© 2025 Charotar University of Science & Technology. All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <!-- Sidebar Script -->
+    <script>
+        const sidebar = document.getElementById("sidebarMenu");
+        const toggleBtn = document.getElementById("sidebarToggle");
+        const overlay = document.getElementById("overlay");
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        });
+
+        overlay.addEventListener("click", function () {
+            sidebar.classList.remove("active");
+            this.classList.remove("active");
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

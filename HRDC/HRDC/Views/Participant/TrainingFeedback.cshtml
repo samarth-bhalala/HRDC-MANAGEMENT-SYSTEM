@@ -1,0 +1,183 @@
+﻿@model HRDC.Models.TrainingFeedbackViewModel
+
+@{
+    ViewData["Title"] = "Training Feedback";
+}
+
+<style>
+    /* Use your existing styles here */
+    .form-slider-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .form-step {
+        display: none;
+    }
+
+        .form-step.active {
+            display: block;
+        }
+
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 2rem;
+            color: #ccc;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+            .rating input:checked ~ label,
+            .rating label:hover,
+            .rating label:hover ~ label {
+                color: gold;
+            }
+
+    .feedback-question {
+        margin-bottom: 20px;
+    }
+
+    .navigation-buttons {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+        .navigation-buttons button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    .btn-next {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-prev {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-submit {
+        background-color: #28a745;
+        color: white;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        resize: vertical;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+</style>
+
+<div class="form-slider-container">
+    <h2 style="text-align: center;">Training Feedback</h2>
+
+    <form asp-action="TrainingFeedback" method="post">
+
+        <!-- Step 1 -->
+        <div class="form-step active" id="step1">
+            <div class="feedback-question">
+                <label>How relevant was the session to your work?</label>
+                <div class="rating">
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        <input type="radio" id="sessionRelevance-@i" name="SessionRelevance" value="@i" @(Model.SessionRelevance == i ? "checked" : "") />
+                        <label for="sessionRelevance-@i">&#9733;</label>
+                    }
+                </div>
+            </div>
+
+            <div class="feedback-question">
+                <label>Was the session well-organized and clear?</label>
+                <div class="rating">
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        <input type="radio" id="sessionOrganization-@i" name="SessionOrganization" value="@i" @(Model.SessionOrganization == i ? "checked" : "") />
+                        <label for="sessionOrganization-@i">&#9733;</label>
+                    }
+                </div>
+            </div>
+
+            <div class="feedback-question">
+                <label>Any comments on the session?</label>
+                <textarea asp-for="SessionComments" rows="3" placeholder="Write your comments here..."></textarea>
+                <span asp-validation-for="SessionComments" class="text-danger"></span>
+            </div>
+
+            <div class="navigation-buttons">
+                <button type="button" class="btn-next" onclick="nextStep()">Next</button>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step" id="step2">
+            <div class="feedback-question">
+                <label>How effectively did the trainer demonstrate subject expertise?</label>
+                <div class="rating">
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        <input type="radio" id="trainerExpertise-@i" name="TrainerExpertise" value="@i" @(Model.TrainerExpertise == i ? "checked" : "") />
+                        <label for="trainerExpertise-@i">&#9733;</label>
+                    }
+                </div>
+            </div>
+
+            <div class="feedback-question">
+                <label>Did the trainer engage participants effectively?</label>
+                <div class="rating">
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        <input type="radio" id="trainerEngagement-@i" name="TrainerEngagement" value="@i" @(Model.TrainerEngagement == i ? "checked" : "") />
+                        <label for="trainerEngagement-@i">&#9733;</label>
+                    }
+                </div>
+            </div>
+
+            <div class="feedback-question">
+                <label>Additional comments about the trainer:</label>
+                <textarea asp-for="TrainerComments" rows="3" placeholder="Your feedback..."></textarea>
+                <span asp-validation-for="TrainerComments" class="text-danger"></span>
+            </div>
+
+            <div class="navigation-buttons">
+                <button type="button" class="btn-prev" onclick="prevStep()">Previous</button>
+                <button type="submit" class="btn-submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        function nextStep() {
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+        }
+
+        function prevStep() {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+        }
+    </script>
+}

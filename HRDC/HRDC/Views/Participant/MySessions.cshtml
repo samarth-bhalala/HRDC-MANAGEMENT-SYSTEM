@@ -1,0 +1,35 @@
+﻿@model IEnumerable<HRDC.Models.SessionViewModel>
+
+<div class="card shadow-lg p-4">
+    <h2 class="text-primary mb-4">My Sessions</h2>
+
+    <fieldset class="border p-3 mb-4">
+        <legend class="float-none w-auto px-3">Participated Trainings</legend>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Training Name</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Trainer</th>
+                    <th>Status</th>
+                    <th>Venue</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var session in Model)
+                {
+                    <tr>
+                        <td>@session.TrainingName</td>
+                        <td>@session.FromDate.ToShortDateString()</td>
+                        <td>@session.ToDate.ToShortDateString()</td>
+                        <td>@session.Trainer</td>
+                        <td>@session.Status</td>
+                        <td>@session.Venue</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </fieldset>
+</div>

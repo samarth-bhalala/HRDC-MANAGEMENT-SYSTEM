@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/HRDC/.vs
+/HRDC/HRDC/bin/Debug/net8.0
+/HRDC/HRDC/obj
+/HRDC/HRDC/appsettings.Development.json

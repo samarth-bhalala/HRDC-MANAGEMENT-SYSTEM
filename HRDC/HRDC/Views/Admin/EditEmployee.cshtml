@@ -1,0 +1,57 @@
+﻿@model EmployeeEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+
+<h2>Edit Employee</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form asp-action="EditEmployee" method="post" class="p-4 border rounded shadow">
+    <div class="mb-3">
+        <label asp-for="EmployeeId" class="form-label">Employee ID</label>
+        <input asp-for="EmployeeId" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DepartmentId" class="form-label">Department</label>
+        <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-select"></select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DesignationId" class="form-label">Designation</label>
+        <select asp-for="DesignationId" asp-items="Model.Designations" class="form-select"></select>
+        <span asp-validation-for="DesignationId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EmployeeTypeId" class="form-label">Employee Type</label>
+        <select asp-for="EmployeeTypeId" asp-items="Model.EmployeeTypes" class="form-select"></select>
+        <span asp-validation-for="EmployeeTypeId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Update</button>
+    <a asp-action="ViewEmployee" class="btn btn-secondary mt-3 ms-2">Back</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
