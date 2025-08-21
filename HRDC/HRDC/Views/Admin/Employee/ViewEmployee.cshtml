@@ -1,4 +1,4 @@
-﻿@model List<EmployeeViewModel>
+﻿@* @model List<EmployeeViewModel>
 
 @{
     ViewData["Title"] = "Employee List";
@@ -53,6 +53,41 @@
                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                 </td>
+            </tr>
+        }
+    </tbody>
+</table>
+ *@
+
+
+@model EmployeeListViewModel
+
+<h2>Employees</h2>
+
+<select asp-for="SelectedType" asp-items="Model.EmployeeTypes" onchange="location.href='@Url.Action("ViewEmployee", "Employee")?type='+this.value">
+</select>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model.Employees)
+        {
+            <tr>
+                <td>@e.EmployeeId</td>
+                <td>@e.Name</td>
+                <td>@e.Email</td>
+                <td>@e.Department</td>
+                <td>@e.Designation</td>
+                <td>@e.EmployeeType</td>
             </tr>
         }
     </tbody>
